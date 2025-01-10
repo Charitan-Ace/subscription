@@ -1,6 +1,6 @@
 package ace.charitan.subscription.internal.subscription.service;
 
-import ace.charitan.common.dto.project.ExternalProjectDto;
+import ace.charitan.common.dto.subscription.NewProjectSubscriptionDto.NewProjectSubscriptionRequestDto;
 import ace.charitan.subscription.internal.subscription.dto.InternalSubscriptionDto;
 
 public interface InternalSubscriptionService {
@@ -9,6 +9,6 @@ public interface InternalSubscriptionService {
 
     InternalSubscriptionDto subscribeNewProjectByRegion(String region);
 
-    void notifySubcribersForNewProject(ExternalProjectDto projectDto);
+    void notifySubcribersForNewProject(NewProjectSubscriptionRequestDto projectDto);
 
 }

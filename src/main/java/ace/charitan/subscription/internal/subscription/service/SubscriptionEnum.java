@@ -67,4 +67,36 @@ public class SubscriptionEnum {
 
     }
 
+    @AllArgsConstructor
+    public static enum RegionType {
+        AFRICA("AFRICA"),
+        ASIA("ASIA"),
+        EUROPE("EUROPE"),
+        NORTH_AMERIA("NORTH_AMERIA"),
+        SOUTH_AMERICA("SOUTH_AMERICA"),
+        OCEANIA("OCEANIA"),
+        ANTARCTICA("ANTARCTICA");
+
+        private String value;
+
+        @JsonValue
+        public String getValue() {
+            return value;
+        }
+
+        @JsonCreator
+        public static RegionType fromValue(String value) {
+            for (RegionType subscription : values()) {
+                String currentSubscription = subscription.getValue();
+                if (currentSubscription.equals(value)) {
+                    return subscription;
+                }
+            }
+
+            // Return a response entity with a 400 Bad Request subscription
+            throw new IllegalArgumentException("Invalid value for SubscriptionType Enum: " + value);
+        }
+
+    }
+
 }
