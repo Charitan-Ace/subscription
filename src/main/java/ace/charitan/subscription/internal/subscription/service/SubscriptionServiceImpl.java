@@ -95,10 +95,11 @@ class SubscriptionServiceImpl implements InternalSubscriptionService {
 
         // Get subscriber list by regions
 
-        // TODO Get country by region
+        // Get country by region
         GetCountryByIsoCodeResponseDto getCountryByIsoCodeResponseDto = subscriptionProducerService
                 .sendAndReceive(new GetCountryByIsoCodeRequestDto(projectDto.getCountryIsoCode()));
-                System.out.println(getCountryByIsoCodeResponseDto.getRegionName());
+        System.out.println("dto" + getCountryByIsoCodeResponseDto);
+        System.out.println("region" + getCountryByIsoCodeResponseDto.getRegionName());
 
         // List<String> regionDonorIdList = getSubscriberListByRegion();
 
