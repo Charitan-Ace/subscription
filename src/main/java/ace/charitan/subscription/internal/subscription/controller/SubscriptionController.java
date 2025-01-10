@@ -1,5 +1,7 @@
 package ace.charitan.subscription.internal.subscription.controller;
 
+import java.util.Objects;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +23,11 @@ class SubscriptionController {
     @PostMapping("/subscribe/project/category/{category}")
     ResponseEntity<InternalSubscriptionDto> subscribeNewProjectByCategory(@PathVariable String category) {
         InternalSubscriptionDto subscriptionDto = subscriptionService.subscribeNewProjectByCategory(category);
-        return new ResponseEntity<>(subscriptionDto, HttpStatus.OK);
+        if (Objects.isNull(subscriptionDto)) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
 
+        return new ResponseEntity<>(subscriptionDto, HttpStatus.OK);
     }
 
 }
