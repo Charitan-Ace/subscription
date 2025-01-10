@@ -43,7 +43,7 @@ class SubscriptionServiceImpl implements InternalSubscriptionService {
 
         // Check existed subscription
         Optional<SubscriptionEntity> existedOptional = subscriptionRepository
-                .findBySubscriptionTypeAndLookUpIdAndDonorIdAndIsActive(SubscriptionType.CATEGORY,
+                .findBySubscriptionTypeAndLookupIdAndDonorIdAndIsActive(SubscriptionType.CATEGORY,
                         category, donorId, true);
 
         if (existedOptional.isPresent()) {
