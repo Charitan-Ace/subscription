@@ -1,0 +1,4 @@
+### Subscribe new project by category FOOD
+POST http://localhost:8080/subscription/subscribe/project/category/FOOD
+Content-Type: application/json
+
