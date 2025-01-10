@@ -25,110 +25,148 @@ import ace.charitan.subscription.internal.subscription.service.SubscriptionEnum.
 @Service
 class SubscriptionServiceImpl implements InternalSubscriptionService {
 
-    @Autowired
-    private SubscriptionRepository subscriptionRepository;
+        @Autowired
+        private SubscriptionRepository subscriptionRepository;
 
-    @Autowired
-    private SubscriptionProducerService subscriptionProducerService;
+        @Autowired
+        private SubscriptionProducerService subscriptionProducerService;
 
-    private CategoryType convertFromStringToCategoryType(String category) {
-        try {
-            CategoryType categoryType = CategoryType.fromValue(category);
-            return categoryType;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    private List<String> getSubscriberListByCategory(CategoryType categoryType) {
-        return subscriptionRepository
-                .findAllBySubscriptionTypeAndLookupIdAndIsActive(
-                        SubscriptionType.CATEGORY, categoryType.getValue(), true)
-                .stream().map(
-                        s -> s.getDonorId())
-                .collect(Collectors.toList());
-    }
-
-    private List<String> getSubscriberListByRegion(RegionType regionType) {
-        return subscriptionRepository
-                .findAllBySubscriptionTypeAndLookupIdAndIsActive(
-                        SubscriptionType.REGION, regionType.getValue(), true)
-                .stream().map(
-                        s -> s.getDonorId())
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public InternalSubscriptionDto subscribeNewProjectByCategory(String category) {
-        // TODO Auto-generated method stub
-
-        // Validate category
-        CategoryType categoryType = convertFromStringToCategoryType(category);
-
-        if (Objects.isNull(categoryType)) {
-            // TODO throw error invalid category
-            return null;
+        private CategoryType convertFromStringToCategoryType(String category) {
+                try {
+                        CategoryType categoryType = CategoryType.fromValue(category);
+                        return categoryType;
+                } catch (Exception e) {
+                        return null;
+                }
         }
 
-        // TODO Modify donorId
-        String donorId = UUID.randomUUID().toString();
-
-        // Check existed subscription
-        Optional<SubscriptionEntity> existedOptional = subscriptionRepository
-                .findBySubscriptionTypeAndLookupIdAndDonorIdAndIsActive(SubscriptionType.CATEGORY,
-                        category, donorId, true);
-
-        if (existedOptional.isPresent()) {
-            // TODO throw error existed
-            return null;
+        private RegionType convertFromStringToRegionType(String region) {
+                try {
+                        RegionType regionType = RegionType.fromValue(region);
+                        return regionType;
+                } catch (Exception e) {
+                        return null;
+                }
         }
 
-        // Save entity to db
-        SubscriptionEntity subscriptionEntity = new SubscriptionEntity(SubscriptionType.CATEGORY, category, true,
-                donorId);
-        subscriptionEntity = subscriptionRepository.save(subscriptionEntity);
+        private List<String> getSubscriberListByCategory(CategoryType categoryType) {
+                return subscriptionRepository
+                                .findAllBySubscriptionTypeAndLookupIdAndIsActive(
+                                                SubscriptionType.CATEGORY, categoryType.getValue(), true)
+                                .stream().map(
+                                                s -> s.getDonorId())
+                                .collect(Collectors.toList());
+        }
 
-        // Return to dto impl and convert back
-        return subscriptionEntity.toInternalSubscriptionDtoImpl();
-    }
+        private List<String> getSubscriberListByRegion(RegionType regionType) {
+                return subscriptionRepository
+                                .findAllBySubscriptionTypeAndLookupIdAndIsActive(
+                                                SubscriptionType.REGION, regionType.getValue(), true)
+                                .stream().map(
+                                                s -> s.getDonorId())
+                                .collect(Collectors.toList());
+        }
 
-    @Override
-    public InternalSubscriptionDto subscribeNewProjectByRegion(String region) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'subscribeNewProjectByRegion'");
-    }
+        @Override
+        public InternalSubscriptionDto subscribeNewProjectByCategory(String category) {
+                // TODO Auto-generated method stub
 
-    @Override
-    public void notifySubcribersForNewProject(NewProjectSubscriptionRequestDto requestDto) {
+                // Validate category
+                CategoryType categoryType = convertFromStringToCategoryType(category);
 
-        ExternalProjectDto projectDto = requestDto.getProject();
+                if (Objects.isNull(categoryType)) {
+                        // TODO throw error invalid category
+                        return null;
+                }
 
-        // Get subscriber list by category
-        List<String> categoryDonorIdList = getSubscriberListByCategory(
-                CategoryType.fromValue(projectDto.getCategoryType()));
+                // TODO Modify donorId
+                String donorId = UUID.randomUUID().toString();
 
-        // Get subscriber list by regions
+                // Check existed subscription
+                Optional<SubscriptionEntity> existedOptional = subscriptionRepository
+                                .findBySubscriptionTypeAndLookupIdAndDonorIdAndIsActive(SubscriptionType.CATEGORY,
+                                                category, donorId, true);
 
-        // Get country by region
-        GetCountryByIsoCodeResponseDto getCountryByIsoCodeResponseDto = subscriptionProducerService
-                .sendAndReceive(new GetCountryByIsoCodeRequestDto(projectDto.getCountryIsoCode()));
+                if (existedOptional.isPresent()) {
+                        // TODO throw error existed
+                        return null;
+                }
 
-        List<String> regionDonorIdList = getSubscriberListByRegion(
-                RegionType.fromValue(getCountryByIsoCodeResponseDto.getRegionName()));
+                // Save entity to db
+                SubscriptionEntity subscriptionEntity = new SubscriptionEntity(SubscriptionType.CATEGORY, category,
+                                true,
+                                donorId);
+                subscriptionEntity = subscriptionRepository.save(subscriptionEntity);
 
-        // Merge two list to a set by id
-        Set<String> donorIdSet = Stream.concat(categoryDonorIdList.stream(), regionDonorIdList.stream())
-                .collect(Collectors.toSet());
+                // Return to dto impl and convert back
+                return subscriptionEntity.toInternalSubscriptionDtoImpl();
+        }
 
-        List<String> donorIdList = donorIdSet.stream().collect(Collectors.toList());
+        @Override
+        public InternalSubscriptionDto subscribeNewProjectByRegion(String region) {
 
-        // Send notification to subscriber via Kafka
-        subscriptionProducerService.send(new NotificationNewProjectSubscriptionRequestDto(
-                donorIdList, projectDto));
+                // Validate category
+                RegionType regionType = convertFromStringToRegionType(region);
 
-        // Send email to subscriber via Kafka
-        subscriptionProducerService.send(new EmailNewProjectSubscriptionRequestDto(donorIdList, projectDto));
+                if (Objects.isNull(regionType)) {
+                        // TODO throw error invalid category
+                        return null;
+                }
 
-    }
+                // TODO Modify donorId
+                String donorId = UUID.randomUUID().toString();
+
+                // Check existed subscription
+                Optional<SubscriptionEntity> existedOptional = subscriptionRepository
+                                .findBySubscriptionTypeAndLookupIdAndDonorIdAndIsActive(SubscriptionType.REGION,
+                                                region, donorId, true);
+
+                if (existedOptional.isPresent()) {
+                        // TODO throw error existed
+                        return null;
+                }
+
+                // Save entity to db
+                SubscriptionEntity subscriptionEntity = new SubscriptionEntity(SubscriptionType.REGION, region,
+                                true,
+                                donorId);
+                subscriptionEntity = subscriptionRepository.save(subscriptionEntity);
+
+                // Return to dto impl and convert back
+                return subscriptionEntity.toInternalSubscriptionDtoImpl();
+        }
+
+        @Override
+        public void notifySubcribersForNewProject(NewProjectSubscriptionRequestDto requestDto) {
+
+                ExternalProjectDto projectDto = requestDto.getProject();
+
+                // Get subscriber list by category
+                List<String> categoryDonorIdList = getSubscriberListByCategory(
+                                CategoryType.fromValue(projectDto.getCategoryType()));
+
+                // Get subscriber list by regions
+
+                // Get country by region
+                GetCountryByIsoCodeResponseDto getCountryByIsoCodeResponseDto = subscriptionProducerService
+                                .sendAndReceive(new GetCountryByIsoCodeRequestDto(projectDto.getCountryIsoCode()));
+
+                List<String> regionDonorIdList = getSubscriberListByRegion(
+                                RegionType.fromValue(getCountryByIsoCodeResponseDto.getRegionName()));
+
+                // Merge two list to a set by id
+                Set<String> donorIdSet = Stream.concat(categoryDonorIdList.stream(), regionDonorIdList.stream())
+                                .collect(Collectors.toSet());
+
+                List<String> donorIdList = donorIdSet.stream().collect(Collectors.toList());
+
+                // Send notification to subscriber via Kafka
+                subscriptionProducerService.send(new NotificationNewProjectSubscriptionRequestDto(
+                                donorIdList, projectDto));
+
+                // Send email to subscriber via Kafka
+                subscriptionProducerService.send(new EmailNewProjectSubscriptionRequestDto(donorIdList, projectDto));
+
+        }
 
 }
