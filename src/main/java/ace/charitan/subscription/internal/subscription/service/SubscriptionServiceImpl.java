@@ -1,13 +1,18 @@
 package ace.charitan.subscription.internal.subscription.service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ace.charitan.common.dto.project.ExternalProjectDto;
 import ace.charitan.subscription.internal.subscription.dto.InternalSubscriptionDto;
+import ace.charitan.subscription.internal.subscription.dto.InternalSubscriptionDtoImpl;
 import ace.charitan.subscription.internal.subscription.service.SubscriptionEnum.CategoryType;
 import ace.charitan.subscription.internal.subscription.service.SubscriptionEnum.SubscriptionType;
 
@@ -24,6 +29,15 @@ class SubscriptionServiceImpl implements InternalSubscriptionService {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private List<String> getSubscriberListByCategory(CategoryType categoryType) {
+        return subscriptionRepository
+                .findAllBySubscriptionTypeAndLookupIdAndIsActive(
+                        SubscriptionType.CATEGORY, categoryType.getValue(), true)
+                .stream().map(
+                        s -> s.getDonorId())
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -58,6 +72,23 @@ class SubscriptionServiceImpl implements InternalSubscriptionService {
 
         // Return to dto impl and convert back
         return subscriptionEntity.toInternalSubscriptionDtoImpl();
+    }
+
+    @Override
+    public void notifySubcribersForNewProject(ExternalProjectDto projectDto) {
+        // Get subscriber list by category
+        List<String> categoryDonorIdList = getSubscriberListByCategory(
+                CategoryType.fromValue(projectDto.getCategoryType()));
+
+        // TODO Get subscriber list by regions
+
+        // List<String> regionDonorIdList = getSubscriberListByRegion();
+
+        // Merge two list to a set by id 
+
+        // Get email or etc. 
+
+        // TODO Send email and notification to subscriber via Kafka 
     }
 
 }
