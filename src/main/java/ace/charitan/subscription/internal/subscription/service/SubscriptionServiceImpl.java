@@ -3,8 +3,10 @@ package ace.charitan.subscription.internal.subscription.service;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import ace.charitan.common.dto.project.ExternalProjectDto;
 import ace.charitan.common.dto.subscription.NewProjectSubscriptionDto.NewProjectSubscriptionRequestDto;
 import ace.charitan.subscription.internal.subscription.dto.InternalSubscriptionDto;
 import ace.charitan.subscription.internal.subscription.service.SubscriptionEnum.CategoryType;
+import ace.charitan.subscription.internal.subscription.service.SubscriptionEnum.RegionType;
 import ace.charitan.subscription.internal.subscription.service.SubscriptionEnum.SubscriptionType;
 
 @Service
@@ -39,6 +42,15 @@ class SubscriptionServiceImpl implements InternalSubscriptionService {
         return subscriptionRepository
                 .findAllBySubscriptionTypeAndLookupIdAndIsActive(
                         SubscriptionType.CATEGORY, categoryType.getValue(), true)
+                .stream().map(
+                        s -> s.getDonorId())
+                .collect(Collectors.toList());
+    }
+
+    private List<String> getSubscriberListByRegion(RegionType regionType) {
+        return subscriptionRepository
+                .findAllBySubscriptionTypeAndLookupIdAndIsActive(
+                        SubscriptionType.REGION, regionType.getValue(), true)
                 .stream().map(
                         s -> s.getDonorId())
                 .collect(Collectors.toList());
@@ -98,14 +110,16 @@ class SubscriptionServiceImpl implements InternalSubscriptionService {
         // Get country by region
         GetCountryByIsoCodeResponseDto getCountryByIsoCodeResponseDto = subscriptionProducerService
                 .sendAndReceive(new GetCountryByIsoCodeRequestDto(projectDto.getCountryIsoCode()));
-        System.out.println("dto" + getCountryByIsoCodeResponseDto);
-        System.out.println("region" + getCountryByIsoCodeResponseDto.getRegionName());
 
-        // List<String> regionDonorIdList = getSubscriberListByRegion();
+        List<String> regionDonorIdList = getSubscriberListByRegion(
+                RegionType.fromValue(getCountryByIsoCodeResponseDto.getRegionName()));
 
         // Merge two list to a set by id
+        Set<String> donorIdSet = Stream.concat(categoryDonorIdList.stream(), regionDonorIdList.stream())
+                .collect(Collectors.toSet());
 
         // Get email or etc.
+        
 
         // TODO Send email and notification to subscriber via Kafka
     }
