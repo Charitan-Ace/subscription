@@ -24,7 +24,6 @@ class SubscriptionEntity extends AbstractEntity implements InternalSubscriptionD
     @Enumerated(EnumType.STRING)
     private SubscriptionType subscriptionType;
 
-    @Enumerated(EnumType.STRING)
     private String lookupId;
 
     private boolean isActive;
