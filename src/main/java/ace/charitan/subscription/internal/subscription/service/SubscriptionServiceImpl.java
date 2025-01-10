@@ -11,8 +11,10 @@ import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ace.charitan.common.dto.email.subscription.EmailNewProjectSubscription.EmailNewProjectSubscriptionRequestDto;
 import ace.charitan.common.dto.geography.GetCountryByIsoCode.GetCountryByIsoCodeRequestDto;
 import ace.charitan.common.dto.geography.GetCountryByIsoCode.GetCountryByIsoCodeResponseDto;
+import ace.charitan.common.dto.notification.subscription.NotificationNewProjectSubscription.NotificationNewProjectSubscriptionRequestDto;
 import ace.charitan.common.dto.project.ExternalProjectDto;
 import ace.charitan.common.dto.subscription.NewProjectSubscriptionDto.NewProjectSubscriptionRequestDto;
 import ace.charitan.subscription.internal.subscription.dto.InternalSubscriptionDto;
@@ -118,10 +120,15 @@ class SubscriptionServiceImpl implements InternalSubscriptionService {
         Set<String> donorIdSet = Stream.concat(categoryDonorIdList.stream(), regionDonorIdList.stream())
                 .collect(Collectors.toSet());
 
-        // Get email or etc.
-        
+        List<String> donorIdList = donorIdSet.stream().collect(Collectors.toList());
 
-        // TODO Send email and notification to subscriber via Kafka
+        // Send notification to subscriber via Kafka
+        subscriptionProducerService.send(new NotificationNewProjectSubscriptionRequestDto(
+                donorIdList, projectDto));
+
+        // Send email to subscriber via Kafka
+        subscriptionProducerService.send(new EmailNewProjectSubscriptionRequestDto(donorIdList, projectDto));
+
     }
 
 }

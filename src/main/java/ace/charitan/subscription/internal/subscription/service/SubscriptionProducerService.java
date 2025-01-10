@@ -11,8 +11,10 @@ import org.springframework.kafka.requestreply.ReplyingKafkaTemplate;
 import org.springframework.kafka.requestreply.RequestReplyFuture;
 import org.springframework.stereotype.Component;
 
+import ace.charitan.common.dto.email.subscription.EmailNewProjectSubscription.EmailNewProjectSubscriptionRequestDto;
 import ace.charitan.common.dto.geography.GetCountryByIsoCode.GetCountryByIsoCodeRequestDto;
 import ace.charitan.common.dto.geography.GetCountryByIsoCode.GetCountryByIsoCodeResponseDto;
+import ace.charitan.common.dto.notification.subscription.NotificationNewProjectSubscription.NotificationNewProjectSubscriptionRequestDto;
 
 @Component
 class SubscriptionProducerService {
@@ -49,12 +51,17 @@ class SubscriptionProducerService {
     }
 
     GetCountryByIsoCodeResponseDto sendAndReceive(GetCountryByIsoCodeRequestDto dto) {
-        GetCountryByIsoCodeResponseDto responseDto = (GetCountryByIsoCodeResponseDto) sendAndReceive(SubscriptionProducerTopic.SUBSCRIPTION_GEOGRAPHY_GET_COUNTRY_BY_ISO_CODE, dto);
+        GetCountryByIsoCodeResponseDto responseDto = (GetCountryByIsoCodeResponseDto) sendAndReceive(
+                SubscriptionProducerTopic.SUBSCRIPTION_GEOGRAPHY_GET_COUNTRY_BY_ISO_CODE, dto);
         return responseDto;
     }
 
-    
+    void send(EmailNewProjectSubscriptionRequestDto requestDto) {
+        send(SubscriptionProducerTopic.SUBSCRIPTION_EMAIL_NEW_PROJECT, requestDto);
+    }
 
-
+    void send(NotificationNewProjectSubscriptionRequestDto requestDto) {
+        send(SubscriptionProducerTopic.SUBSCRIPTION_NOTIFICATION_NEW_PROJECT, requestDto);
+    }
 
 }
