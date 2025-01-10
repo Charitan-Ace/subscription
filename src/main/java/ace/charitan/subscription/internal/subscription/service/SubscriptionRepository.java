@@ -1,5 +1,6 @@
 package ace.charitan.subscription.internal.subscription.service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -13,4 +14,7 @@ interface SubscriptionRepository extends JpaRepository<SubscriptionEntity, UUID>
     // findBySubscriptionTypeAndLookupIdAndDonorIdAndIsActive
     Optional<SubscriptionEntity> findBySubscriptionTypeAndLookupIdAndDonorIdAndIsActive(
             SubscriptionType subscriptionType, String lookupId, String donorId, boolean isActive);
+
+    List<SubscriptionEntity> findAllBySubscriptionTypeAndLookupIdAndIsActive(SubscriptionType subscriptionType,
+            String lookupId, boolean isActive);
 }
