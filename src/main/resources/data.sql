@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS media CASCADE;
+DROP TABLE IF EXISTS subscription CASCADE;
 CREATE TABLE subscription (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     subscription_type VARCHAR(50),
