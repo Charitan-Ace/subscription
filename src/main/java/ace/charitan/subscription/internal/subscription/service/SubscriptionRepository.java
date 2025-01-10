@@ -11,6 +11,6 @@ import ace.charitan.subscription.internal.subscription.service.SubscriptionEnum.
 @Repository
 interface SubscriptionRepository extends JpaRepository<SubscriptionEntity, UUID> {
     // findBySubscriptionTypeAndLookupIdAndDonorIdAndIsActive
-    Optional<SubscriptionEntity> findBySubscriptionTypeAndLookUpIdAndDonorIdAndIsActive(
+    Optional<SubscriptionEntity> findBySubscriptionTypeAndLookupIdAndDonorIdAndIsActive(
             SubscriptionType subscriptionType, String lookupId, String donorId, boolean isActive);
 }
