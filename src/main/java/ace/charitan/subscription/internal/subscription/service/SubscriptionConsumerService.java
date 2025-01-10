@@ -14,7 +14,7 @@ class SubscriptionConsumerService {
 
     @KafkaListener(topics = "project-subscription-new-project", groupId = "subscription-id")
     void handleSubscriptionNewProject(NewProjectSubscriptionRequestDto requestDto) {
-        // System.out.println("cat type" + requestDto.getProject().getCategoryType());
+        subscriptionService.notifySubcribersForNewProject(requestDto);
     }
 
 }

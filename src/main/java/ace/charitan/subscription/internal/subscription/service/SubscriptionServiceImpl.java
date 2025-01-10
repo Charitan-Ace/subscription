@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ace.charitan.common.dto.project.ExternalProjectDto;
+import ace.charitan.common.dto.subscription.NewProjectSubscriptionDto.NewProjectSubscriptionRequestDto;
 import ace.charitan.subscription.internal.subscription.dto.InternalSubscriptionDto;
 import ace.charitan.subscription.internal.subscription.dto.InternalSubscriptionDtoImpl;
 import ace.charitan.subscription.internal.subscription.service.SubscriptionEnum.CategoryType;
@@ -81,7 +82,10 @@ class SubscriptionServiceImpl implements InternalSubscriptionService {
     }
 
     @Override
-    public void notifySubcribersForNewProject(ExternalProjectDto projectDto) {
+    public void notifySubcribersForNewProject(NewProjectSubscriptionRequestDto requestDto) {
+
+        ExternalProjectDto projectDto = requestDto.getProject();
+
         // Get subscriber list by category
         List<String> categoryDonorIdList = getSubscriberListByCategory(
                 CategoryType.fromValue(projectDto.getCategoryType()));
@@ -90,12 +94,11 @@ class SubscriptionServiceImpl implements InternalSubscriptionService {
 
         // List<String> regionDonorIdList = getSubscriberListByRegion();
 
-        // Merge two list to a set by id 
+        // Merge two list to a set by id
 
-        // Get email or etc. 
+        // Get email or etc.
 
-        // TODO Send email and notification to subscriber via Kafka 
+        // TODO Send email and notification to subscriber via Kafka
     }
-
 
 }
