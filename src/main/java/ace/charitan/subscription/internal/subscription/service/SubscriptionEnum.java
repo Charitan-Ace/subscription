@@ -40,4 +40,31 @@ public class SubscriptionEnum {
 
     }
 
+    @AllArgsConstructor
+    public static enum SubscriptionType {
+        CATEGORY("CATEGORY"),
+        REGION("REGION");
+
+        private String value;
+
+        @JsonValue
+        public String getValue() {
+            return value;
+        }
+
+        @JsonCreator
+        public static SubscriptionType fromValue(String value) {
+            for (SubscriptionType subscription : values()) {
+                String currentSubscription = subscription.getValue();
+                if (currentSubscription.equals(value)) {
+                    return subscription;
+                }
+            }
+
+            // Return a response entity with a 400 Bad Request subscription
+            throw new IllegalArgumentException("Invalid value for SubscriptionType Enum: " + value);
+        }
+
+    }
+
 }

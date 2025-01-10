@@ -27,8 +27,14 @@ class SubscriptionServiceImpl implements InternalSubscriptionService {
         CategoryType categoryType = convertFromStringToCategoryType(category);
 
         if (Objects.isNull(categoryType)) {
+            // TODO throw error
             return null;
         }
+
+        // Check existed subscription
+
+        
+
 
         return null;
 
