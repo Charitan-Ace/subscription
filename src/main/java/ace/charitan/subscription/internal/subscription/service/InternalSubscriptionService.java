@@ -7,6 +7,8 @@ public interface InternalSubscriptionService {
 
     InternalSubscriptionDto subscribeNewProjectByCategory(String category);
 
+    InternalSubscriptionDto subscribeNewProjectByRegion(String region);
+
     void notifySubcribersForNewProject(ExternalProjectDto projectDto);
 
 }

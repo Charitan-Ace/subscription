@@ -30,4 +30,14 @@ class SubscriptionController {
         return new ResponseEntity<>(subscriptionDto, HttpStatus.OK);
     }
 
+    @PostMapping("/subscribe/project/region/{region}")
+    ResponseEntity<InternalSubscriptionDto> subscribeNewProjectByRegion(@PathVariable String region) {
+        InternalSubscriptionDto subscriptionDto = subscriptionService.subscribeNewProjectByRegion(region);
+        if (Objects.isNull(subscriptionDto)) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(subscriptionDto, HttpStatus.OK);
+    }
+
 }

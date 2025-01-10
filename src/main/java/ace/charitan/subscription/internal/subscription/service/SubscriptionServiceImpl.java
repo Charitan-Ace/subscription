@@ -75,6 +75,12 @@ class SubscriptionServiceImpl implements InternalSubscriptionService {
     }
 
     @Override
+    public InternalSubscriptionDto subscribeNewProjectByRegion(String region) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'subscribeNewProjectByRegion'");
+    }
+
+    @Override
     public void notifySubcribersForNewProject(ExternalProjectDto projectDto) {
         // Get subscriber list by category
         List<String> categoryDonorIdList = getSubscriberListByCategory(
@@ -90,5 +96,6 @@ class SubscriptionServiceImpl implements InternalSubscriptionService {
 
         // TODO Send email and notification to subscriber via Kafka 
     }
+
 
 }
